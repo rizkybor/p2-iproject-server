@@ -1,15 +1,16 @@
 const router = require('express').Router()
 
-const Controller = require('../controllers')
-const Account = require('../controllers/account')
+const controllers = require('../controllers/index')
+const account = require('../controllers/account')
 const authentication = require('../middlewares/authentication')
 
-router.post('/register', Account.register)
-router.post('/login', Account.login)
+router.post('/register', account.register)
+router.post('/login', account.login)
 router.use(authentication)
-router.get('/heroes', Controller.getHeros)
-// router.post('/myheroes/:id')
+router.get('/mountain', controllers.getMountain)
+// router.post('/')
+// router.delete('/')
 
-// router.use(erorHandler)
+// router.use('/')
 
 module.exports = router

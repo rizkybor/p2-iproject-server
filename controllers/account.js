@@ -1,40 +1,63 @@
-const { comparePassword } = require("../helpers/bcrypt")
-const { signToken } = require("../helpers/jwt")
-const { User } = require("../models")
+const { User } = require('../models')
+const { signToken } = require('../helpers/jwt')
+const { comparePassword } = require('../helpers/bcrypt')
 
-const register = async (req,res,next)=>{
-    try{
-        const { email, password } = req. body
-        const foundUser = await User.create({ email, password })
-        res.status(201).json({id: foundUser.id, email: foundUser.email})
+const register = async (req, res, next)=>{
+    try {
+        const { username, email, password } = req.body
+        const adminUser = await User.create({
+            username,
+            email,
+            password,
+            role: "admin"
+        })
+        if (adminUser) {
+            res.status(201).json({
+                id: adminUser.id,
+                username: adminUser.username,
+                email: adminUser.email,
+            })
+        }
     }
     catch(err){
-        next(err)
+        console.log (err)
+        res.send(err)
     }
 }
 
-
-const login = async (req,res,next)=> {
+const login = async (req, res, next)=>{
     try{
         const { email, password } = req.body
-        const userLogin = await User.findOne({where: {email}})
-        if (!userLogin){
-            throw({name: "Invalid"})
+        const userIsLogin = await User.findOne({where: { email }})
+        
+        if (!userIsLogin){
+            throw ({ name: 'Invalid' })
         }
-        const validation = comparePassword(password, userLogin.password)
-        if (!validation){
-            throw({name: "Invalid"})
+        let validatePassword = comparePassword(password, userIsLogin.password)
+        console.log(validatePassword, '<<< lolos validasi user')
+        if(!validatePassword){
+            throw ({ name:'Invalid' })
         }
-        const tokenPayload = ({
-            id: userLogin.id,
-            email: userLogin.email
+
+        let token = ({
+            id: userIsLogin.id,
+            email: userIsLogin.email,
         })
-        const token = signToken(tokenPayload)
-        res.status(200).json({access_token: token})
-    }   
+
+        let access_token = signToken(token)
+        console.log (token)
+
+        res.status(201).json({
+            message: 'Login Success',
+            email: token.email,
+            token: access_token
+        })
+    }
     catch(err){
-        next(err)
+        console.log (err)
+        res.send(err)
     }
 }
 
-module.exports = { register, login }
+
+module.exports = {register,login}
