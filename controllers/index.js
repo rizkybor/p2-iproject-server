@@ -1,6 +1,5 @@
 const { Mountain, Listing, User } = require("../models")
 
-
 class Controller {
     static async getMountain(req, res, next) {
         try{
