@@ -1,12 +1,11 @@
-const jwt = require("jsonwebtoken")
-
+const jwt = require('jsonwebtoken')
 
 const signToken = ((payload)=>{
     return jwt.sign(payload, process.env.JWT_SIGNATURE)
 })
 
-const verifyToken = ((token) => {
+const verifyToken = ((token)=>{
     return jwt.verify(token, process.env.JWT_SIGNATURE)
 })
 
-module.exports = { signToken, verifyToken }
+module.exports = {signToken, verifyToken}
